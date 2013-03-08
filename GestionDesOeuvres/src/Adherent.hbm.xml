@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 f?vr. 2013 17:17:13 by Hibernate Tools 4.0.0 -->
+<hibernate-mapping package="hibernate.metier">
+ <class catalog="baseOeuvre" name="Adherent" table="adherent">
+  <id name="idAdherent" type="java.lang.Integer">
+   <column name="id_adherent"/>
+   <generator class="identity"/>
+  </id>
+  <property generated="never" lazy="false" name="nomAdherent" type="string">
+   <column length="100" name="nom_adherent" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="prenomAdherent" type="string">
+   <column length="100" name="prenom_adherent"/>
+  </property>
+  <set fetch="select" inverse="true" lazy="true" name="reservations"
+   sort="unsorted" table="reservation">
+   <key>
+    <column name="id_adherent" not-null="true" unique="true"/>
+   </key>
+   <one-to-many class="Reservation"/>
+  </set>
+ </class>
+</hibernate-mapping>

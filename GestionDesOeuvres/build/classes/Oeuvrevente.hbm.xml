@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 22 f?vr. 2013 17:17:13 by Hibernate Tools 4.0.0 -->
+<hibernate-mapping package="hibernate.metier">
+
+    <class name="Oeuvrevente" table="oeuvrevente" catalog="baseOeuvre">
+        <id name="idOeuvrevente" type="java.lang.Integer">
+            <column name="id_oeuvrevente" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="proprietaire" class="Proprietaire" fetch="select">
+            <column name="id_proprietaire" />
+        </many-to-one>
+        <property name="titreOeuvrevente" type="string">
+            <column name="titre_oeuvrevente" length="200" not-null="true" />
+        </property>
+        <property name="etatOeuvrevente" type="string">
+            <column name="etat_oeuvrevente" length="1" not-null="true" />
+        </property>
+        <property name="prixOeuvrevente" type="float">
+            <column name="prix_oeuvrevente" precision="12" scale="0" not-null="true" />
+        </property>
+        <set name="reservations" table="reservation" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_oeuvrevente" not-null="true" unique="true" />
+            </key>
+            <one-to-many class="Reservation" />
+        </set>
+    </class>
+</hibernate-mapping>
