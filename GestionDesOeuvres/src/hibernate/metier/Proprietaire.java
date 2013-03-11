@@ -84,5 +84,12 @@ public class Proprietaire implements java.io.Serializable
     {
 	this.oeuvreventes = oeuvreventes;
     }
+    
+    @Override
+    public String toString()
+    {
+	return idProprietaire +" "+ nomProprietaire + prenomProprietaire;
+	
+    }
 
 }

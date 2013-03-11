@@ -1,40 +1,50 @@
-<%-- 
-    Document   : reserver
-    Created on : 4 déc. 2010, 23:19:03
-    Author     : alain
---%>
+<%@include file="includes/header.jsp"%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-   "http://www.w3.org/TR/html4/loose.dtd">
+<input type="hidden" name="uneErreur" value="${MesErreurs}"
+	id="id_erreur">
 
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Réservation</title>
-    </head>
-    <body>
-        <h1 align='center'>Réservation d'une oeuvre</h1>
-        <form action="xxxxxxxxxxxxxxxxx" method="post" name="frmModif">
-            <p>
-            Titre : <input type="text" name="txtTitre" value="xxxxxxxxx">
-            <br><br>
-            Prix : <input type="text" name="txtPrix" value="xxxxxxxxx">
-            <br><br>
-            </p>
-            <p>
-            Date réservation : <input type="text" name="txtDate" value=""> Format : JJ/MM/AAAA
-            <br><br>
-            </p>
-            Adhérent : <SELECT name="lstAdherents">
+<form method="post" action="Controller?action=saveReservation"
+	onsubmit="return verif();" class="form-horizontal">
 
+	<div class="control-group">
+		<label class="control-label" for="titre">Titre de l'oeuvre</label>
+		<div class="controls">
+			<input type="text" id="titre" name="titre"
+				value="${oeuvre.titreOeuvrevente}">
+		</div>
+	</div>
 
-            </SELECT>
-            <br><br>
-            <input type="submit" value="Envoi">
-            <p>
+	<div class="control-group">
+		<label class="control-label" for="prix">Prix </label>
+		<div class="controls">
+			<input type="text" id="prix" name="prix"
+				value="${oeuvre.prixOeuvrevente}">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="date">Prix </label>
+		<div class="controls">
+			<input type="text" id="datefin" name="datefin"
+				data-date-format="yyyy-mm-dd">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="prix">Adh�rent </label>
+		<div class="controls">
+			<SELECT name="lstProprietaires">
+				<c:forEach var="current" items="${listeAdherents}">
+					<option selected value="${current.idAdherent}">${current.nomAdherent}</option>
+				</c:forEach>
 
-            </p>
-        </form>
-    </body>
-</html>
+			</SELECT>
+		</div>
+	</div>
+
+	<div class="controls">
+		<button type="submit" class="btn btn-primary">R�server</button>
+		<button type="reset" class="btn">Reset</button>
+	</div>
+</form>
+
+<hr>
+<jsp:include page="includes/footer.jsp" />

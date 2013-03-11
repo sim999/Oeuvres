@@ -55,7 +55,7 @@
                             <strong>Erreur</strong> lors de la connexion !
                         </div>
 
-                        <form class="form-horizontal well" method="POST" action="/pokemon/rss/login">
+                        <form class="form-horizontal well" method="POST" action="Controller?action=login">
                             <fieldset>
                                 <legend>Connectez-vous...</legend>
 
