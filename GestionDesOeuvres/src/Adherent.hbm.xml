@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
                                    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22 f?vr. 2013 17:17:13 by Hibernate Tools 4.0.0 -->
+<!-- Generated 11 mars 2013 01:36:10 by Hibernate Tools 4.0.0 -->
 <hibernate-mapping package="hibernate.metier">
  <class catalog="baseOeuvre" name="Adherent" table="adherent">
   <id name="idAdherent" type="java.lang.Integer">

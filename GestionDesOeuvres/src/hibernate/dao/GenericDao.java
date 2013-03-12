@@ -16,13 +16,13 @@ import org.hibernate.SessionFactory;
  */
 public class GenericDao<T> {
 
-	private Log log;
+	protected Log log;
 	
 	public GenericDao(T t) {	
 		log = LogFactory.getLog(t.getClass());
 	}
 
-	private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+	protected final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
 	public void persist(T transientInstance) {
 		log.debug("persisting "+transientInstance.getClass().toString()+" instance");

@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22 f?vr. 2013 17:17:13 by Hibernate Tools 4.0.0 -->
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 11 mars 2013 01:36:10 by Hibernate Tools 4.0.0 -->
 <hibernate-mapping package="hibernate.metier">
-    <class name="Oeuvrepret" table="oeuvrepret" catalog="baseOeuvre">
-        <id name="idOeuvrepret" type="java.lang.Integer">
-            <column name="id_oeuvrepret" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="proprietaire" class="Proprietaire" fetch="select">
-            <column name="id_proprietaire" />
-        </many-to-one>
-        <property name="titreOeuvrepret" type="string">
-            <column name="titre_oeuvrepret" length="200" not-null="true" />
-        </property>
-    </class>
+ <class catalog="baseOeuvre" name="Oeuvrepret" table="oeuvrepret">
+  <id name="idOeuvrepret" type="java.lang.Integer">
+   <column name="id_oeuvrepret"/>
+   <generator class="identity"/>
+  </id>
+  <many-to-one class="Proprietaire" fetch="select" name="proprietaire">
+   <column name="id_proprietaire"/>
+  </many-to-one>
+  <property generated="never" lazy="false" name="titreOeuvrepret" type="string">
+   <column length="200" name="titre_oeuvrepret" not-null="true"/>
+  </property>
+ </class>
 </hibernate-mapping>

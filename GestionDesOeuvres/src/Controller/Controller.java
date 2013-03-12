@@ -1,12 +1,17 @@
 package Controller;
 
 import hibernate.dao.GenericDao;
+import hibernate.dao.ReservationDao;
 import hibernate.metier.Adherent;
+import hibernate.metier.LoginException;
 import hibernate.metier.Oeuvrevente;
 import hibernate.metier.Proprietaire;
+import hibernate.metier.Reservation;
+import hibernate.metier.ReservationId;
 import hibernate.util.HibernateUtil;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +30,8 @@ import hibernate.metier.*;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import util.Tools;
+
 /**
  * Servlet implementation class Controller
  */
@@ -40,9 +47,10 @@ public class Controller extends HttpServlet
     private static final String MODIFOEUVRE = "modifOeuvre";
     private static final String RESERVEOEUVRE = "reserveOeuvre";
     private static final String CATALOGUE = "listeOeuvres";
-    private static final String CATAlOGUERESERVATION = "listeReservation";
+    private static final String CATAlOGUERESERVATION = "listeReservations";
     private static final String SAVERESERVATION = "saveReservation";
     private static final String CONFIRMRESERVATION = "confirmReservation";
+    private static final String DELETERESERVATION = "deleteReservation";
 
     /**
      * @see HttpServlet#HttpServlet()
@@ -54,7 +62,7 @@ public class Controller extends HttpServlet
     }
 
     public void processRequest(HttpServletRequest request,
-	    HttpServletResponse response) throws Exception
+	    HttpServletResponse response) throws LoginException, ParseException
     {
 
 	String actionName = request.getParameter(ACTION_TYPE);
@@ -65,25 +73,32 @@ public class Controller extends HttpServlet
 	{
 	    String userLogin = request.getParameter("user_login");
 	    String userPassword = request.getParameter("user_password");
-	    if (userLogin.equals("userepul") && userPassword.equals("epul"))
+	    try
 	    {
-		destinationPage = "/accueil.jsp";
-	    } else
-		throw new Exception("utilisateur Inconnu");
-
+		if (userLogin.equals("userepul") && userPassword.equals("epul"))
+		{
+		    destinationPage = "/accueil.jsp";
+		} else
+		    throw new LoginException("Utilisateur Inconnu");
+	    } 
+	    catch (LoginException e)
+	    {
+		throw e;
+	    }
 	}
 	if (ADDOEUVRE.equals(actionName))
 	{
 	    flagSaisieModif = true;
 	    Proprietaire p = new Proprietaire();
 	    GenericDao<Proprietaire> dp = new GenericDao<Proprietaire>(p);
+
 	    ArrayList<Proprietaire> listeProprietaires = (ArrayList<Proprietaire>) dp
 		    .findAll(p);
-
 	    request.setAttribute("flagSaisieModif", flagSaisieModif);
 
 	    request.setAttribute("listeProprietaires", listeProprietaires);
 	    destinationPage = "/addOeuvre.jsp";
+
 	}
 
 	else if (CATALOGUE.equals(actionName))
@@ -104,7 +119,6 @@ public class Controller extends HttpServlet
 	    GenericDao<Oeuvrevente> dov = new GenericDao<Oeuvrevente>(
 		    new Oeuvrevente());
 
-	    // Récupère le bon objet
 	    Oeuvrevente oeuvreVente = dov.findById(new Oeuvrevente(), id);
 
 	    flagSaisieModif = false;
@@ -117,10 +131,9 @@ public class Controller extends HttpServlet
 	    request.setAttribute("flagSaisieModif", flagSaisieModif);
 	    request.setAttribute("listeProprietaires", listeProprietaires);
 	    destinationPage = "/addOeuvre.jsp";
+
 	} else if (UPDATEOEUVRE.equals(actionName))
 	{
-	    System.out.println("SAVE");
-
 	    String id = request.getParameter("id"); // cas ou modification il
 	    // existe déjà un id...
 
@@ -137,18 +150,18 @@ public class Controller extends HttpServlet
 		    new Proprietaire());
 
 	    Proprietaire p = dp.findById(new Proprietaire(), idProprietaire);
-	    System.out.println(p.getIdProprietaire());
 
 	    Oeuvrevente ov = dov.findById(new Oeuvrevente(), idOeuvreVente);
 	    ov.setPrixOeuvrevente(prixOeuvre);
 	    ov.setTitreOeuvrevente(titreOeuvre);
-	    System.out.println(ov.getIdOeuvrevente());
 	    ov.setProprietaire(p);
 	    dov.attachDirty(ov);
+	    destinationPage = "/accueil.jsp";
 	}
 
 	else if (SAVEOEUVRE.equals(actionName))
 	{
+
 	    String titreOeuvre = request.getParameter("titre");
 	    float prixOeuvre = Float.valueOf(request.getParameter("prix"));
 	    int idProprietaire = Integer.valueOf(request
@@ -163,30 +176,111 @@ public class Controller extends HttpServlet
 	    GenericDao<Oeuvrevente> dov = new GenericDao<Oeuvrevente>(ov);
 	    GenericDao<Proprietaire> dp = new GenericDao<Proprietaire>(
 		    new Proprietaire());
+
 	    Proprietaire p = dp.findById(new Proprietaire(), idProprietaire);
 
 	    ov.setProprietaire(p);
 
 	    dov.attachDirty(ov);
+
+	    destinationPage = "/accueil.jsp";
+
 	} else if (RESERVEOEUVRE.equals(actionName))
 	{
+	    String id = request.getParameter("id");
+	    int idOeuvre = Integer.valueOf(id);
+	    GenericDao<Oeuvrevente> dov = new GenericDao<Oeuvrevente>(
+		    new Oeuvrevente());
+
+	    Oeuvrevente ov = dov.findById(new Oeuvrevente(), idOeuvre);
+
 	    GenericDao<Adherent> da = new GenericDao<Adherent>(new Adherent());
 	    ArrayList<Adherent> listeAdherents = (ArrayList<Adherent>) da
 		    .findAll(new Adherent());
 
+	    request.setAttribute("oeuvre", ov);
 	    request.setAttribute("listeAdherents", listeAdherents);
 	    destinationPage = "/reservation.jsp";
+
+	} else if (DELETERESERVATION.equals(actionName))
+	{
+	    int idOeuvreVente = Integer.valueOf(request
+		    .getParameter("idOeuvreVente"));
+	    int idAdherent = Integer
+		    .valueOf(request.getParameter("idAdherent"));
+	    ReservationId ri = new ReservationId(idOeuvreVente, idAdherent);
+	    Reservation r = new Reservation();
+
+	    ReservationDao dr = new ReservationDao(new Reservation());
+	    r = dr.findReservationbyId(r, ri);
+	    dr.delete(r);
+	    GenericDao<Oeuvrevente> dov = new GenericDao<Oeuvrevente>(
+		    new Oeuvrevente());
+
+	    Oeuvrevente ov = dov.findById(new Oeuvrevente(), idOeuvreVente);
+	    if (ov.getReservations().size() == 1
+		    && ov.getReservations().contains(r))
+
+	    {
+		ov.setEtatOeuvrevente("L");
+		dov.attachDirty(ov);
+	    }
+
+	    destinationPage = "/accueil.jsp";
+
+	} else if (CONFIRMRESERVATION.equals(actionName))
+	{
+	    int idOeuvreVente = Integer.valueOf(request
+		    .getParameter("idOeuvreVente"));
+	    int idAdherent = Integer
+		    .valueOf(request.getParameter("idAdherent"));
+	    ReservationId ri = new ReservationId(idOeuvreVente, idAdherent);
+	    Reservation r = new Reservation();
+
+	    ReservationDao dr = new ReservationDao(new Reservation());
+	    r = dr.findReservationbyId(r, ri);
+	    r.setStatut("confirmee");
+	    dr.attachDirty(r);
+
+	    destinationPage = "/accueil.jsp";
 
 	} else if (SAVERESERVATION.equals(actionName))
-	{
-	    GenericDao<Adherent> da = new GenericDao<Adherent>(new Adherent());
-	    ArrayList<Adherent> listeAdherents = (ArrayList<Adherent>) da
-		    .findAll(new Adherent());
 
-	    request.setAttribute("listeAdherents", listeAdherents);
-	    destinationPage = "/reservation.jsp";
+	{
+	    int idOeuvreVente = Integer.valueOf(request.getParameter("id"));
+	    int idAdherent = Integer.valueOf(request
+		    .getParameter("lstReservations"));
+	    Date dateReservation = Tools.StrToDate(
+		    request.getParameter("datedebut"), "yyyy-mm-dd");
+	    Reservation r = new Reservation();
+
+	    GenericDao<Oeuvrevente> dov = new GenericDao<Oeuvrevente>(
+		    new Oeuvrevente());
+
+	    Oeuvrevente ov = dov.findById(new Oeuvrevente(), idOeuvreVente);
+
+	    ov.setEtatOeuvrevente("R");
+
+	    dov.attachDirty(ov);
+
+	    GenericDao<Adherent> da = new GenericDao<Adherent>(new Adherent());
+	    Adherent a = da.findById(new Adherent(), idAdherent);
+
+	    r.setId(new ReservationId(idOeuvreVente, idAdherent));
+	    r.setOeuvrevente(ov);
+	    r.setAdherent(a);
+	    r.setDateReservation(dateReservation);
+	    r.setStatut("Attente");
+
+	    GenericDao<Reservation> dr = new GenericDao<Reservation>(
+		    new Reservation());
+
+	    dr.attachDirty(r);
+	    destinationPage = "/accueil.jsp";
+
 	} else if (CATAlOGUERESERVATION.equals(actionName))
 	{
+
 	    Reservation r = new Reservation();
 	    GenericDao<Reservation> dr = new GenericDao<Reservation>(r);
 
@@ -195,14 +289,14 @@ public class Controller extends HttpServlet
 
 	    request.setAttribute("listeReservations", liste);
 	    destinationPage = "/listereservations.jsp";
-
 	}
-
 	RequestDispatcher dispatcher = getServletContext()
 		.getRequestDispatcher(destinationPage);
 	try
 	{
+
 	    dispatcher.forward(request, response);
+
 	} catch (ServletException e)
 	{
 	    // TODO Auto-generated catch block
@@ -213,6 +307,7 @@ public class Controller extends HttpServlet
 	    e.printStackTrace();
 
 	}
+
     }
 
     /**
@@ -222,6 +317,7 @@ public class Controller extends HttpServlet
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException
     {
+
 	Session session = null;
 	Transaction tx = null;
 	try
@@ -230,17 +326,31 @@ public class Controller extends HttpServlet
 	    tx = session.beginTransaction();
 	    this.processRequest(request, response);
 	    tx.commit();
-	} catch (Exception e)
+	}
+	
+	catch (Exception e)
 	{
 	    if (tx != null)
 		tx.rollback();
-	    tx.rollback();
 	    // Redirection vers la page jsp appropriee
 	    request.setAttribute("erreur", e.getMessage());
 	    RequestDispatcher dispatcher = getServletContext()
 		    .getRequestDispatcher("/erreur.jsp");
 	    dispatcher.forward(request, response);
 	}
+
+	/*
+	 * try {
+	 * 
+	 * Session session = HibernateUtil.getSessionFactory()
+	 * .getCurrentSession();
+	 * 
+	 * Transaction tx = session.beginTransaction();
+	 * 
+	 * this.processRequest(request, response, tx, session); if
+	 * (tx.isActive()) tx.commit(); } catch (Exception e) { // TODO
+	 * Auto-generated catch block e.printStackTrace(); }
+	 */
 
     }
 
@@ -251,10 +361,19 @@ public class Controller extends HttpServlet
     protected void doPost(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException
     {
+	/*
+	 * try { Session session = HibernateUtil.getSessionFactory()
+	 * .getCurrentSession(); Transaction tx = session.beginTransaction();
+	 * 
+	 * this.processRequest(request, response, tx, session);
+	 * 
+	 * if (tx.isActive()) tx.commit();
+	 * 
+	 * } catch (Exception e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); }
+	 */
 	Session session = null;
 	Transaction tx = null;
-	// this.processRequest(request, response);
-
 	try
 	{
 	    session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -265,7 +384,7 @@ public class Controller extends HttpServlet
 	{
 	    if (tx != null)
 		tx.rollback();
-	    tx.rollback(); // Redirection vers la page jsp appropriee
+	    // Redirection vers la page jsp appropriee
 	    request.setAttribute("erreur", e.getMessage());
 	    RequestDispatcher dispatcher = getServletContext()
 		    .getRequestDispatcher("/erreur.jsp");

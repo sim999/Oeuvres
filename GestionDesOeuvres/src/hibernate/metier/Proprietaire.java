@@ -1,6 +1,6 @@
 package hibernate.metier;
 
-// Generated 22 févr. 2013 17:19:52 by Hibernate Tools 4.0.0
+// Generated 11 mars 2013 01:38:49 by Hibernate Tools 4.0.0
 
 import java.util.HashSet;
 import java.util.Set;
@@ -85,11 +85,17 @@ public class Proprietaire implements java.io.Serializable
 	this.oeuvreventes = oeuvreventes;
     }
     
-    @Override
-    public String toString()
+    public boolean equals(Object other)
     {
-	return idProprietaire +" "+ nomProprietaire + prenomProprietaire;
-	
+	if ((this == other))
+	    return true;
+	if ((other == null))
+	    return false;
+	if (!(other instanceof Proprietaire))
+	    return false;
+	Proprietaire castOther = (Proprietaire) other;
+
+	return (this.idProprietaire == castOther.getIdProprietaire());
     }
 
 }

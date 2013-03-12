@@ -1,6 +1,6 @@
 package hibernate.metier;
 
-// Generated 22 févr. 2013 17:19:52 by Hibernate Tools 4.0.0
+// Generated 11 mars 2013 01:38:49 by Hibernate Tools 4.0.0
 
 import java.util.Date;
 
@@ -14,18 +14,20 @@ public class Reservation implements java.io.Serializable
     private Adherent adherent;
     private Oeuvrevente oeuvrevente;
     private Date dateReservation;
+    private String statut;
 
     public Reservation()
     {
     }
 
     public Reservation(ReservationId id, Adherent adherent,
-	    Oeuvrevente oeuvrevente, Date dateReservation)
+	    Oeuvrevente oeuvrevente, Date dateReservation, String statut)
     {
 	this.id = id;
 	this.adherent = adherent;
 	this.oeuvrevente = oeuvrevente;
 	this.dateReservation = dateReservation;
+	this.statut = statut;
     }
 
     public ReservationId getId()
@@ -66,6 +68,30 @@ public class Reservation implements java.io.Serializable
     public void setDateReservation(Date dateReservation)
     {
 	this.dateReservation = dateReservation;
+    }
+
+    public String getStatut()
+    {
+	return this.statut;
+    }
+
+    public void setStatut(String statut)
+    {
+	this.statut = statut;
+    }
+
+    public boolean equals(Object obj)
+    {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	final Reservation other = (Reservation) obj;
+	if (this.id == other.id)
+	    return true;
+	return false;
     }
 
 }

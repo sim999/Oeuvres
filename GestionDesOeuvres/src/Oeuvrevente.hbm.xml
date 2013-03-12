@@ -1,31 +1,31 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22 f?vr. 2013 17:17:13 by Hibernate Tools 4.0.0 -->
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 11 mars 2013 01:36:10 by Hibernate Tools 4.0.0 -->
 <hibernate-mapping package="hibernate.metier">
-
-    <class name="Oeuvrevente" table="oeuvrevente" catalog="baseOeuvre">
-        <id name="idOeuvrevente" type="java.lang.Integer">
-            <column name="id_oeuvrevente" />
-            <generator class="identity" />
-        </id>
-        <many-to-one name="proprietaire" class="Proprietaire" fetch="select">
-            <column name="id_proprietaire" />
-        </many-to-one>
-        <property name="titreOeuvrevente" type="string">
-            <column name="titre_oeuvrevente" length="200" not-null="true" />
-        </property>
-        <property name="etatOeuvrevente" type="string">
-            <column name="etat_oeuvrevente" length="1" not-null="true" />
-        </property>
-        <property name="prixOeuvrevente" type="float">
-            <column name="prix_oeuvrevente" precision="12" scale="0" not-null="true" />
-        </property>
-        <set name="reservations" table="reservation" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="id_oeuvrevente" not-null="true" unique="true" />
-            </key>
-            <one-to-many class="Reservation" />
-        </set>
-    </class>
+ <class catalog="baseOeuvre" name="Oeuvrevente" table="oeuvrevente">
+  <id name="idOeuvrevente" type="java.lang.Integer">
+   <column name="id_oeuvrevente"/>
+   <generator class="identity"/>
+  </id>
+  <many-to-one class="Proprietaire" fetch="select" name="proprietaire">
+   <column name="id_proprietaire"/>
+  </many-to-one>
+  <property generated="never" lazy="false" name="titreOeuvrevente" type="string">
+   <column length="200" name="titre_oeuvrevente" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="etatOeuvrevente" type="string">
+   <column length="1" name="etat_oeuvrevente" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="prixOeuvrevente" type="float">
+   <column name="prix_oeuvrevente" not-null="true" precision="12" scale="0"/>
+  </property>
+  <set fetch="select" inverse="true" lazy="true" name="reservations"
+   sort="unsorted" table="reservation">
+   <key>
+    <column name="id_oeuvrevente" not-null="true" unique="true"/>
+   </key>
+   <one-to-many class="Reservation"/>
+  </set>
+ </class>
 </hibernate-mapping>

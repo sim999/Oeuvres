@@ -1,30 +1,32 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated 22 f?vr. 2013 17:17:13 by Hibernate Tools 4.0.0 -->
+                                   "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 11 mars 2013 01:36:10 by Hibernate Tools 4.0.0 -->
 <hibernate-mapping package="hibernate.metier">
-    <class name="Proprietaire" table="proprietaire" catalog="baseOeuvre">
-        <id name="idProprietaire" type="java.lang.Integer">
-            <column name="id_proprietaire" />
-            <generator class="identity" />
-        </id>
-        <property name="nomProprietaire" type="string">
-            <column name="nom_proprietaire" length="100" not-null="true" />
-        </property>
-        <property name="prenomProprietaire" type="string">
-            <column name="prenom_proprietaire" length="100" />
-        </property>
-        <set name="oeuvreprets" table="oeuvrepret" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="id_proprietaire" />
-            </key>
-            <one-to-many class="Oeuvrepret" />
-        </set>
-        <set name="oeuvreventes" table="oeuvrevente" inverse="true" lazy="true" fetch="select">
-            <key>
-                <column name="id_proprietaire" />
-            </key>
-            <one-to-many class="Oeuvrevente" />
-        </set>
-    </class>
+ <class catalog="baseOeuvre" name="Proprietaire" table="proprietaire">
+  <id name="idProprietaire" type="java.lang.Integer">
+   <column name="id_proprietaire"/>
+   <generator class="identity"/>
+  </id>
+  <property generated="never" lazy="false" name="nomProprietaire" type="string">
+   <column length="100" name="nom_proprietaire" not-null="true"/>
+  </property>
+  <property generated="never" lazy="false" name="prenomProprietaire" type="string">
+   <column length="100" name="prenom_proprietaire"/>
+  </property>
+  <set fetch="select" inverse="true" lazy="true" name="oeuvreprets"
+   sort="unsorted" table="oeuvrepret">
+   <key>
+    <column name="id_proprietaire"/>
+   </key>
+   <one-to-many class="Oeuvrepret"/>
+  </set>
+  <set fetch="select" inverse="true" lazy="true" name="oeuvreventes"
+   sort="unsorted" table="oeuvrevente">
+   <key>
+    <column name="id_proprietaire"/>
+   </key>
+   <one-to-many class="Oeuvrevente"/>
+  </set>
+ </class>
 </hibernate-mapping>

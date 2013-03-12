@@ -1,6 +1,6 @@
 package hibernate.metier;
 
-// Generated 22 fvr. 2013 17:19:52 by Hibernate Tools 4.0.0
+// Generated 11 mars 2013 01:38:49 by Hibernate Tools 4.0.0
 
 import java.util.HashSet;
 import java.util.Set;
@@ -72,4 +72,16 @@ public class Adherent implements java.io.Serializable
 	this.reservations = reservations;
     }
 
+    public boolean equals(Object other)
+    {
+	if ((this == other))
+	    return true;
+	if ((other == null))
+	    return false;
+	if (!(other instanceof Adherent))
+	    return false;
+	Adherent castOther = (Adherent) other;
+
+	return (this.idAdherent == castOther.getIdAdherent());
+    }
 }
